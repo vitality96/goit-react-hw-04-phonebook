@@ -5,12 +5,18 @@ import ContactForm from "./ContactForm/ContactForm";
 import Filter from "./Filter/Filter";
 import ContactList from "./ContactList/ContactList";
 
+
 export default function App() {
-  const [contacts, setContacts] = useState([]);
-  const [filter, setFilter] = useState("");
+  const [contacts, setContacts] = useState(() => JSON.parse(window.localStorage.getItem('contacts')) ?? []);
+  const [filter, setFilter] = useState('');
+
+  useEffect(() => {
+      window.localStorage.setItem('contacts', JSON.stringify(contacts));
+  }, [contacts]);
+
 
   const handleChange = (evt) => {
-    setFilter(evt.currentTarget.value);
+    setFilter(evt.target.value);
   };
 
   const deleteContact = contactId => {
@@ -27,16 +33,6 @@ export default function App() {
       ? alert(`${name} is already in the contacts`)
       : setContacts([newContact, ...contacts])
       };
-      
-    useEffect(() => {
-    localStorage.setItem('contacts', JSON.stringify(contacts));
-  }, [contacts]);
-  
-  useEffect(() => {
-    const contacts = localStorage.getItem('contacts');
-    const parsedContacts = JSON.parse(contacts);
-    setContacts(parsedContacts)
-  }, []);
 
   const getVisibleContacts = () => {
     const normalizedFilter = filter.toLowerCase();
